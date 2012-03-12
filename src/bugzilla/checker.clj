@@ -21,7 +21,7 @@
                     :params [{"Bugzilla_login" *user*
                               "Bugzilla_password" *password*
                               "ids" bug-ids}]})}) 
-     :body read-json :result :bugs (:or [])
+     :body read-json :result :bugs (or [])
      (try+ (catch Object _ []))
      ))
 
