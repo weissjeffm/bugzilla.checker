@@ -1,7 +1,6 @@
 (ns bugzilla.checker
   (:require [clj-http.client :as http])
-  (:use 
-        slingshot.slingshot
+  (:use slingshot.slingshot
         [clojure.data.json :as json]))
 
 (def req-id (atom 0))
@@ -22,7 +21,9 @@
                     :params [{"Bugzilla_login" *user*
                               "Bugzilla_password" *password*
                               "ids" bug-ids}]})}) 
-     :body read-json :result :bugs))
+     :body read-json :result :bugs (:or [])
+     (try+ (catch Object _ []))
+     ))
 
 (defn fixed? [bug]
   (boolean
