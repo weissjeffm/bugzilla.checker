@@ -1,4 +1,4 @@
-(defproject bugzilla.checker "0.1.0"
+(defproject bugzilla.checker "0.1.1"
   :description "A lightweight bugzilla client that checks for whether bugs are still open."
   :dev-dependencies [[fn.trace "1.3.2.0-SNAPSHOT"]]
   :jvm-opts ["-Xmx128m"]
