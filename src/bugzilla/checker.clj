@@ -9,8 +9,8 @@
 (def ^:dynamic *user* nil)
 (def ^:dynamic *password*  nil)
 (def ^:dynamic *open-statuses*
-  ["NEW"
-   "ASSIGNED"])
+  #{"NEW"
+    "ASSIGNED"})
 
 (defn get-bugs [bug-ids]
   (-> (http/post *url* 
@@ -26,9 +26,8 @@
      ))
 
 (defn fixed? [bug]
-  (boolean
-   (some (complement (set *open-statuses*))
-         (:status bug))))
+  ((complement *open-statuses*)
+   (:status bug)))
 
 (defn open-bz-bugs "Filters bug ids and returns as html links only those that are still open." [ & ids]
   (with-meta (fn [_]
