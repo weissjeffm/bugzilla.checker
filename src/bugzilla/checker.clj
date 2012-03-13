@@ -27,7 +27,7 @@
 
 (defn fixed? [bug]
   (boolean
-   (some (set *open-statuses*)
+   (some (complement (set *open-statuses*))
          (:status bug))))
 
 (defn open-bz-bugs "Filters bug ids and returns as html links only those that are still open." [ & ids]
