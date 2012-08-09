@@ -13,23 +13,29 @@
     "ASSIGNED"})
 
 (defn get-bugs [bug-ids]
-  (-> (http/post *url* 
-           {:content-type :json
-            :body (json/json-str
-                   {:method "Bug.get_bugs"
-                    :id (swap! req-id inc)
-                    :params [{"Bugzilla_login" *user*
-                              "Bugzilla_password" *password*
-                              "ids" bug-ids}]})}) 
-     :body read-json :result :bugs (or [])
-     (try+ (catch Object _ []))
-     ))
+  (let [retval
+        (-> (http/post
+            *url* 
+            {:content-type :json
+             :body (json/json-str
+                    {:method "Bug.get_bugs"
+                     :id (swap! req-id inc)
+                     :params [{"Bugzilla_login" *user*
+                               "Bugzilla_password" *password*
+                               "ids" bug-ids}]})}) 
+           :body read-json)]
+    (if (:error retval)
+      (throw+ (assoc (:error retval) :type ::bugzilla-api-error))
+      (-> retval :result :bugs (or [])))))
 
 (defn fixed? [bug]
   ((complement *open-statuses*)
    (:status bug)))
 
-(defn open-bz-bugs "Filters bug ids and returns as html links only those that are still open." [ & ids]
+(defn open-bz-bugs
+  "Filters bug ids and returns as html links only those that are still
+   open."
+  [ & ids]
   (with-meta (fn [_]
                (for [bug (->> ids get-bugs (filter (complement fixed?)))]
                  (format "<a href='https://bugzilla.redhat.com/show_bug.cgi?id=%1$d'>%1$d: %2$s</a>"
